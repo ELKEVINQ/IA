@@ -12,7 +12,7 @@ class Prueba:
         self.entrenado = False
         self.lSup = 1.0
         self.lInf = 0.0
-        self.file_path = "validos.txt"  # Archivo donde se guardarán los pares válidos
+        self.file_path = "validos_aleatorios.txt"  # Archivo donde se guardarán los pares válidos
         self.cargar_validos()
 
     def entrenador(self, iteraciones, paso, presicion):
@@ -43,10 +43,9 @@ class Prueba:
                 break  # Salir del bucle de iteraciones
 
         self.entrenado = True
+        self.operar_todos(presicion)
         print("Entrenamiento terminado")
 
-        self.imprimir_validos()
-        self.guardar_validos()
 
     def operador(self, entrada, salida, iteraciones, presicion):
         if self.validos[0] and self.validos[1]:  # Verifica que ambas listas no estén vacías
@@ -92,6 +91,43 @@ class Prueba:
         self.resultados[1].append(self.aumento)
 
         return self.aumento
+    
+    def operar_todos(self, presicion):
+        if self.entrenado:
+            print("El modelo ya ha sido entrenado. No se puede operar todos los elementos.")
+            return
+        
+        print("Operando con todos los elementos disponibles:")
+        i = 0
+        while i < len(self.celcius):
+            c = self.celcius[i]
+            f = self.faren[i]
+            resultado = self.operador(c, f, 0, presicion)  # Llama a operador con iteraciones = 0
+            
+            # Verificar si el resultado coincide con faren
+            if resultado == "igual":
+                i += 1
+            else:
+                # Mover el par no válido a la lista de inválidos
+                encontrado = False
+                for index in range(len(self.validos[0])):
+                    peso = self.validos[0][index]
+                    sezgo = self.validos[1][index]
+                    if round((c * peso) + sezgo, presicion) == f:
+                        encontrado = True
+                        break
+                
+                if not encontrado:
+                    # Mover el par actual a invalidos
+                    self.invalidos[0].append(self.validos[0].pop(index))
+                    self.invalidos[1].append(self.validos[1].pop(index))
+                else:
+                    i += 1
+
+            print(f"Celcius: {c}, Faren: {f}, Resultado: {resultado}")
+
+        self.imprimir_validos()
+        self.guardar_memoria()
 
     def unicos(self, iteraciones, presicion):
         tries = 0
@@ -136,4 +172,4 @@ class Prueba:
 
 prueba = Prueba()
 # Entrenar
-prueba.entrenador(100, 0.1, 1)
+prueba.entrenador(1000, 0.1, 1)
