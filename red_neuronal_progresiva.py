@@ -132,8 +132,12 @@ class Prueba:
                 resultado = (entrada * nodos[0]) + nodos[1]
                 if resultado < salida:
                     self.aumento = "sube"
+                    self.invalidos[0].append(self.pesos[-1])
+                    self.invalidos[1].append(self.sezgos[-1])
                 elif resultado > salida:
                     self.aumento = "baja"
+                    self.invalidos[0].append(self.pesos[-1])
+                    self.invalidos[1].append(self.sezgos[-1])
                 else:
                     self.aumento = "igual"
                     self.validos[0].append(self.pesos[-1])
@@ -144,8 +148,12 @@ class Prueba:
             resultado = (entrada * nodos[0]) + nodos[1]
             if resultado < salida:
                 self.aumento = "sube"
+                self.invalidos[0].append(self.pesos[-1])
+                self.invalidos[1].append(self.sezgos[-1])
             elif resultado > salida:
                 self.aumento = "baja"
+                self.invalidos[0].append(self.pesos[-1])
+                self.invalidos[1].append(self.sezgos[-1])
             else:
                 self.aumento = "igual"
                 self.validos[0].append(self.pesos[-1])

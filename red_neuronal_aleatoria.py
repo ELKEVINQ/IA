@@ -32,7 +32,10 @@ class Prueba:
                         if resultado == "sube":
                             self.limSezgo += paso
                         if resultado == "baja":
-                            self.limSezgo -= paso
+                            if self.limSezgo > 0:
+                                self.limSezgo -= paso
+                            else:
+                                self.peso-= paso
                         if resultado == "igual":
                             print(f"Igual encontrado en Iteracion {i * j}")
                             self.pesos = []
@@ -41,8 +44,8 @@ class Prueba:
                         print(f"Index {valor}: Celcius {self.celcius[valor]}, ResultadoN {self.resultados[0][-1]}, ResultadoT {self.resultados[1][-1]}, Faren {self.faren[valor]}, peso {self.peso}, sezgo {self.sezgo}")
                         # Aumentar el paso cada 1/10 de las iteraciones de n para alcanzar mas resultados
                         if (j + 1) % 10 == 0:
-                            self.peso += paso
-                            self.peso = round(self.peso, 2)
+                            self.limPeso += paso
+                            self.limPeso = round(self.limPeso, presicion)
                     
                 valor += 1
                 if valor >= len(self.celcius):
@@ -68,24 +71,32 @@ class Prueba:
                     print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {peso_actual} y sezgo {sezgo_actual}")
                     break
             else:
-                nodos = self.unicos(iteraciones, presicion)
+                nodos = self.unicos(presicion)
                 resultado = (entrada * nodos[0]) + nodos[1]
                 if resultado < salida:
                     self.aumento = "sube"
+                    self.invalidos[0].append(self.pesos[-1])
+                    self.invalidos[1].append(self.sezgos[-1])
                 elif resultado > salida:
                     self.aumento = "baja"
+                    self.invalidos[0].append(self.pesos[-1])
+                    self.invalidos[1].append(self.sezgos[-1])
                 else:
                     self.aumento = "igual"
                     self.validos[0].append(self.pesos[-1])
                     self.validos[1].append(self.sezgos[-1])
                     print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {nodos[0]} y sezgo {nodos[1]}")
         else:
-            nodos = self.unicos(iteraciones, presicion)
+            nodos = self.unicos( presicion)
             resultado = (entrada * nodos[0]) + nodos[1]
             if resultado < salida:
                 self.aumento = "sube"
+                self.invalidos[0].append(self.pesos[-1])
+                self.invalidos[1].append(self.sezgos[-1])
             elif resultado > salida:
                 self.aumento = "baja"
+                self.invalidos[0].append(self.pesos[-1])
+                self.invalidos[1].append(self.sezgos[-1])
             else:
                 self.aumento = "igual"
                 self.validos[0].append(self.pesos[-1])
@@ -93,15 +104,12 @@ class Prueba:
                 print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {nodos[0]} y sezgo {nodos[1]}")
 
         # Almacena los resultados
-        self.resultados[0].append(str(resultado))
+        self.resultados[0].append(round(resultado, presicion))
         self.resultados[1].append(self.aumento)
 
         return self.aumento
     
     def operar_todos(self, presicion):
-        if self.entrenado:
-            print("El modelo ya ha sido entrenado. No se puede operar todos los elementos.")
-            return
         
         i = 0
         while i < len(self.celcius):
@@ -136,9 +144,9 @@ class Prueba:
         self.imprimir_validos()
         self.guardar_memoria()
 
-    def unicos(self, iteraciones, presicion):
+    def unicos(self, presicion):
         ciclo = 0
-        while ciclo < iteraciones:
+        while ciclo < len(self.invalidos[0]):
             valorP = round(random.uniform(0, self.limPeso), presicion)
             valorS = round(random.uniform(0, self.limSezgo), presicion)
             
@@ -146,9 +154,9 @@ class Prueba:
             if not self.pares_repetidos(valorP, valorS) and (valorP not in self.invalidos[0] or valorS not in self.invalidos[1]):
                 break
             ciclo += 1
-        if ciclo >= iteraciones:
+        if ciclo >= len(self.invalidos[0]):
             self.entrenado = True
-            print(f"No se encontraron valores únicos luego de {iteraciones} intentos")
+            print(f"No se encontraron valores únicos luego de {len(self.invalidos[0])} intentos")
         self.pesos.append(valorP)
         self.sezgos.append(valorS)
         self.peso = valorP
@@ -198,4 +206,4 @@ class Prueba:
 
 prueba = Prueba()
 # Entrenar
-prueba.entrenador(10000, 1, 0.1)
+prueba.entrenador(10, 1, 0.1)
