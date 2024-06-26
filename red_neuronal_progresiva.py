@@ -155,27 +155,6 @@ class Prueba:
         self.resultados[0].append(resultado)
         self.resultados[1].append(self.aumento)
         
-        # Verificar si este peso y sesgo son válidos para todos los pares
-        if self.validos[0] and self.validos[1] or valor > 0:
-            print(f"Comenzando verificacion de iguales")
-            valido_para_todos = True
-            for i in range(len(self.validos[0]) - 1, -1, -1):  # Iterar desde el último elemento hasta el primero
-                c = self.celcius[i]
-                f = self.faren[i]
-                if round((c * self.validos[0][i]) + self.validos[1][i], presicion) != f:
-                    valido_para_todos = False
-                    break
-            
-            if valido_para_todos:
-                print(f"¡Peso y sesgo válidos para todos los pares!")
-            else:
-                # Mover el último par válido a la lista de inválidos
-                if self.validos[0] and self.validos[1]:
-                    self.invalidos[0].append(self.validos[0].pop())
-                    self.invalidos[1].append(self.validos[1].pop())
-        else:
-            print("No hay suficientes datos válidos para verificar.")
-        
         return self.aumento
 
     def operar_todos(self, presicion):
