@@ -109,60 +109,55 @@ class Prueba:
         print("Entrenamiento terminado")
 
 
-    def operador(self, entrada, salida, iteraciones, presicion, valor):
-        resultado = None  # Inicializamos resultado con None
-        
-        if self.validos[0] and self.validos[1]:
+    def operador(self, entrada, salida, presicion):
+        resultado = None
+        if self.validos:
             encontrado = False
-            for index in range(len(self.validos[0])):
-                peso = self.validos[0][index]
-                sezgo = self.validos[1][index]
-                resultado = (entrada * peso) + sezgo
+            for peso_actual, sezgo_actual in self.validos:
+                resultado = (entrada * peso_actual) + sezgo_actual
                 if resultado < salida:
                     self.aumento = "sube"
                 elif resultado > salida:
                     self.aumento = "baja"
                 else:
                     self.aumento = "igual"
-                    print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {peso} y sezgo {sezgo}")
+                    print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {peso_actual} y sezgo {sezgo_actual}")
                     encontrado = True
                     break
+
             if not encontrado:
-                nodos = self.unicos(iteraciones, presicion)
+                nodos = self.unicos(presicion)
                 resultado = (entrada * nodos[0]) + nodos[1]
                 if resultado < salida:
                     self.aumento = "sube"
-                    self.invalidos[0].append(self.pesos[-1])
-                    self.invalidos[1].append(self.sezgos[-1])
                 elif resultado > salida:
                     self.aumento = "baja"
-                    self.invalidos[0].append(self.pesos[-1])
-                    self.invalidos[1].append(self.sezgos[-1])
                 else:
                     self.aumento = "igual"
-                    self.validos[0].append(self.pesos[-1])
-                    self.validos[1].append(self.sezgos[-1])
+                    self.validos.add((nodos[0], nodos[1]))  # Agregar nuevos valores generados
+                    self.pesos.append(nodos[0])  # Agregar el peso generado a la lista
+                    self.sezgos.append(nodos[1])  # Agregar el sesgo generado a la lista
+                    self.peso = nodos[0]  # Actualizar el peso actual
+                    self.sezgo = nodos[1]  # Actualizar el sesgo actual
                     print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {nodos[0]} y sezgo {nodos[1]}")
         else:
-            nodos = self.unicos(iteraciones, presicion)
+            nodos = self.unicos(presicion)
             resultado = (entrada * nodos[0]) + nodos[1]
             if resultado < salida:
                 self.aumento = "sube"
-                self.invalidos[0].append(self.pesos[-1])
-                self.invalidos[1].append(self.sezgos[-1])
             elif resultado > salida:
                 self.aumento = "baja"
-                self.invalidos[0].append(self.pesos[-1])
-                self.invalidos[1].append(self.sezgos[-1])
             else:
                 self.aumento = "igual"
-                self.validos[0].append(self.pesos[-1])
-                self.validos[1].append(self.sezgos[-1])
+                self.validos.add((nodos[0], nodos[1]))  # Agregar nuevos valores generados
+                self.pesos.append(nodos[0])  # Agregar el peso generado a la lista
+                self.sezgos.append(nodos[1])  # Agregar el sesgo generado a la lista
+                self.peso = nodos[0]  # Actualizar el peso actual
+                self.sezgo = nodos[1]  # Actualizar el sesgo actual
                 print(f"Igual encontrado {entrada} para el valor {resultado} con el peso {nodos[0]} y sezgo {nodos[1]}")
-                
-        self.resultados[0].append(resultado)
-        self.resultados[1].append(self.aumento)
-        
+
+        self.resultados.append((round(resultado, presicion), self.aumento))
+
         return self.aumento
 
     def operar_todos(self, presicion):
