@@ -1,5 +1,27 @@
 import random
 
+#Por favor no eliminar cuando se reulilice este código
+
+#Hola mi nombre es Kevin Zambrano, muchos me conocen como Lord_Of_Q, este codigo fue desarrollado a la par con otro archivo en el mismo
+#repositorio, comenzó siendo yo tratando de entender cómo funciona la inteligencia artificial, y bueno, este entrenador de una red neuronal
+#simple es a la respuesta a la que llegué, esta basado en la idea de un video de youtube de enseñar a una maquina a transformar numeros
+#de celcius a decimales mediante la formula x = (n * peso) + sezgo, donde x es el fahrenheit, n es celcius y los pesos y sezgos son aleatorios.
+
+#De hecho del video la unica informacion que tome, fue la formula de la transformacion, el resto lo hice por mi cuenta.
+
+#El programa funciona mediante un sistema de iteraciones, el cual define cuantas veces va a ejecutarse el entrenamiento por cada elemento por
+#cada item disponible en la lista de muestra, siendo siempre un par para ambos, luego una presicion que define el numero de decimales para el
+#ruido con el cual va a funcionar el programa, teniendo mas ruido mientras más decimales, pero mas presicion como dicta el nombre y por último
+#tenemos el paso, que va a ser el aumento o decremento segun el resultado obtenido, pudiendo variar mucho o muy poco para agilizar los procesos
+#y guardandolos en una lista discriminatoria para no volver a seleccionar los resultados inutiles, esto agilita ejecuciones pequeñas,
+#pero ralentiza un poco las grandes, aunque no es muy notable.
+
+#Recomiendo probar haciendo un aumento desde 10 en el entrenador, para reiniciarlo, solo hay que borrar el txt de validos o su contenido.
+#Mi entrenamiento mas optimizado, ha sido de 1000 iteraciones con presicion de 1 y paso de 0.2, luego de 2 intentos.
+#Si el programa se ralentiza recomiendo borrar las lineas 154 y 167 o borrar los datos de validos_aleatorios.txt, control+c en consola para parar
+#Gracias por revisar mi codigo, es libre de uso, asi que modifiquenlo a su gusto, pero si me pueden mencionar, lo agradecería.
+
+
 class Red_neuronal_aleatoria:
     def __init__(self):
         #Se definen las variales necesarias para el funcionamiento, las primeras 4 sirven para el entrenamiento
@@ -53,14 +75,16 @@ class Red_neuronal_aleatoria:
                 print("Desea utilizar los parametros de su ultimo entrenamiento")
                 print("1. Si")
                 print("2. No")
-                reutilizar = input("Elija entre 1 y 2")
+                reutilizar = input("Elija entre 1 y 2: ")
                 if reutilizar == "1": #si decidimos reutilizar los datos del entrenamiento se ejecuta esto
                     self.entrenador(self.iteraciones, self.presicion, self.paso)
+                    break
                 elif reutilizar == "2": #si decidimos no utilizar se pregunta nuevamente
                     self.iteraciones = int(input("Ingrese el número de iteraciones para el entrenamiento: "))
                     self.presicion = int(input("Ingrese la precisión deseada para el entrenamiento: "))
                     self.paso = float(input("Ingrese el paso para el entrenamiento: "))
                     self.entrenador(self.iteraciones, self.presicion, self.paso)
+                    break
                 else:
                     print("Seleccion invalida, seleccione 1 o 2")
                     break
@@ -126,6 +150,8 @@ class Red_neuronal_aleatoria:
                 self.limSup += paso
             #El limite para el aleatorio para el peso
             self.limPeso = self.limSup / 10
+            #Discriminar los pares inutiles
+            self.invalidos.add((nodos[0], nodos[1]))
         elif resultado > salida:# Si el resultado devuelto del operador es mayor al esperado se realiza lo mismo que arriba pero en resta
             if self.limSup > 0: #Primero vemos que el numero aleatorio no pueda tender a negativos
                 if (resultado - self.faren[posicion]) >= 100:
@@ -137,6 +163,8 @@ class Red_neuronal_aleatoria:
                 else: #Esto se encarga que si se vuelve negativo, regrese a positivo
                     self.limSup += 10
                 self.limPeso = self.limSup / 10
+            #Discriminar los pares inutiles
+            self.invalidos.add((nodos[0], nodos[1]))
         else: #Cuando encuentra un igual lo envia a validos,
             self.validos.add((self.pesos[-1], self.sezgos[-1]))  # Agregar los últimos valores generados
             #Se imprime el resultado a consola
